@@ -1,0 +1,132 @@
+<?php
+/**
+ * Plugin Name: Lister
+ * Plugin URI: #
+ * Description: This is a Test Plugin.
+ * Version: The Plugin's Version Number 1.0
+ * Author: CNichols
+ * Author URI: http://robotlaserparty.com
+ * License: A "Slug" license name e.g. GPL2
+ */
+
+ /*  Copyright YEAR  PLUGIN_AUTHOR_NAME  (email : PLUGIN AUTHOR EMAIL)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License, version 2, as 
+    published by the Free Software Foundation.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+?>
+
+<?php
+//Creates the CPT Lister *note I removed custom-fields & Commnets
+add_action( 'init', 'create_lister' );
+
+function create_lister() {
+    register_post_type( 'lister',
+        array(
+            'labels' => array(
+                'name' => 'Lister',
+                'singular_name' => 'Lister',
+                'add_new' => 'Add New Listing',
+                'add_new_item' => 'Add New Listing',
+                'edit' => 'Edit',
+                'edit_item' => 'Edit Listing',
+                'new_item' => 'New Movie Review',
+                'view' => 'View Your Custom Listing',
+                'view_item' => 'View Listing',
+                'search_items' => 'Search Listing',
+                'not_found' => 'No Listings found',
+                'not_found_in_trash' => 'No Listings found in Trash',
+                'parent' => 'Parent Listing'
+            ),
+ 
+            'public' => true,
+            'menu_position' => 25,
+            'supports' => array( 'title', 'editor', 'thumbnail' ),
+            'taxonomies' => array( '' ),
+            'menu_icon' => plugins_url( 'images/icon.png', __FILE__ ),
+            'has_archive' => true
+        )
+    );
+}
+?>
+
+<?php
+add_action( 'admin_init', 'my_admin' );
+
+function my_admin() {
+    add_meta_box( 'lister_meta_box',
+        'Lister Details',
+        'display_lister_meta_box',
+        'lister', 'normal', 'high'
+    );
+}
+?>
+
+<?php
+function display_lister_meta_box( $lister) {
+    // Retrieve current name of the Agent and location ID
+    $lister_agent = esc_html( get_post_meta( $lister->ID, 'lister_agent', true ) );
+    $lister_location = esc_html( get_post_meta( $lister->ID, 'lister_location', true ) );
+    ?>
+    <table>
+        <tr>
+            <td style="width: 100%">Agent Name</td>
+            <td><input type="text" size="80" name="lister_agent" value="<?php echo $lister_agent; ?>" /></td>
+        </tr>
+
+        <tr>
+            <td style="width: 100%">Listing Location</td>
+            <td><input type="text" size="80" name="lister_location" value="<?php echo $lister_location; ?>" /></td>
+        </tr>
+    </table>
+    <?php
+}
+?>
+
+<?php
+add_action( 'save_post', 'add_lister_fields', 10, 2 );
+
+function add_lister_fields( $lister_id, $lister ) {
+    // Check post type for lister
+    if ( $lister->post_type == 'lister' ) {
+        // Store data in post meta table if present in post data
+        if ( isset( $_POST['lister_agent'] ) && $_POST['lister_agent'] != '' ) {
+            update_post_meta( $lister_id, 'lister_agent', $_POST['lister_agent'] );
+        }
+        if ( isset( $_POST['lister_location'] ) && $_POST['lister_location'] != '' ) {
+            update_post_meta( $lister_id, 'lister_location', $_POST['lister_location'] );
+        }
+    }
+}
+?>
+
+
+
+<?php
+add_filter( 'template_include', 'include_template_function', 1 );
+
+function include_template_function( $template_path ) {
+    if ( get_post_type() == 'lister' ) {
+        if ( is_single() ) {
+            // checks if the file exists in the theme first,
+            // otherwise serve the file from the plugin
+            if ( $theme_file = locate_template( array ( 'archive-lister.php' ) ) ) {
+                $template_path = $theme_file;
+            } else {
+                $template_path = plugin_dir_path( __FILE__ ) . '/archive-lister.php';
+            }
+        }
+    }
+    return $template_path;
+}
+?>
