@@ -9,7 +9,7 @@
  * License: A "Slug" license name e.g. GPL2
  */
 
- /*  Copyright YEAR  PLUGIN_AUTHOR_NAME  (email : PLUGIN AUTHOR EMAIL)
+ /*  2013 YEAR  CNichols  
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License, version 2, as 
@@ -40,7 +40,7 @@ function create_lister() {
                 'add_new_item' => 'Add New Listing',
                 'edit' => 'Edit',
                 'edit_item' => 'Edit Listing',
-                'new_item' => 'New Movie Review',
+                'new_item' => 'New Listeing',
                 'view' => 'View Your Custom Listing',
                 'view_item' => 'View Listing',
                 'search_items' => 'Search Listing',
