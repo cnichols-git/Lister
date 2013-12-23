@@ -1,7 +1,7 @@
 <?php
 
 /*
-*  Template Name: Lister 4 columns
+*  Template Name: Lister 4 columns test
 */
 ?>
 
